@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minha Página Inicial</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100 h-screen">
+    <div class="container mx-auto p-6">
+      <div
+        class="flex justify-between items-center mb-8 bg-white p-6 rounded shadow-md"
+      >
+        <h1 id="textName" class="text-3xl font-bold text-gray-800"></h1>
+        <div class="flex md:flex-row flex-col">
+          <button
+            onclick="window.location.href = '/social'"
+            class="bg-neutral-500 hover:bg-blue-700 mr-2 text-white font-bold py-2 px-4 rounded flex items-center"
+          >
+            <i class="fas fa-solid fa-house mr-2"></i> Home
+          </button>
+
+          <button
+            onclick="window.location.href = '/perfil'"
+            class="bg-neutral-500 hover:bg-blue-700 md:my-0 my-2 mr-2 text-white font-bold py-2 px-4 rounded flex items-center"
+          >
+            <i class="fas fa-solid fa-user mr-2"></i> Perfil
+          </button>
+
+          <button
+            id="logout-btn"
+            class="bg-red-500 hover:bg-red-700 mr-2 text-white font-bold py-2 px-4 rounded flex items-center"
+          >
+            <i class="fas fa-sign-out-alt mr-2"></i> Sair
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-6 flex items-center space-x-4">
+        <label class="flex items-center space-x-2 cursor-pointer">
+          <input
+            type="radio"
+            name="filter"
+            value="acao"
+            class="hidden"
+            checked
+          />
+          <div
+            class="w-4 h-4 bg-white border-2 border-gray-400 rounded-md flex items-center justify-center"
+          >
+            <div class="w-2 h-2 bg-blue-600 rounded"></div>
+          </div>
+          <span class="text-gray-700 font-bold">Ação Social</span>
+        </label>
+        <label class="flex items-center space-x-2 cursor-pointer">
+          <input type="radio" name="filter" value="usuario" class="hidden" />
+          <div
+            class="w-4 h-4 bg-white border-2 border-gray-400 rounded-md flex items-center justify-center"
+          >
+            <div class="w-2 h-2 bg-blue-600 rounded hidden"></div>
+          </div>
+          <span class="text-gray-700 font-bold">Voluntarios</span>
+        </label>
+      </div>
+
+      <div class="w-full flex flex-col items-center">
+        <div class="flex w-full items-center mb-6">
+          <h2 class="text-2xl font-bold mr-5 text-gray-800">Todas as ações</h2>
+        </div>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div
+      id="modal"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+    >
+      <div
+        class="bg-white m-4 p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-transform duration-300 scale-95"
+      >
+        <div class="flex justify-end">
+          <button
+            id="close-modal"
+            class="text-gray-600 hover:text-gray-900 text-3xl font-bold"
+          >
+            &times;
+          </button>
+        </div>
+        <h2
+          id="modal-nome"
+          class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2"
+        ></h2>
+        <p id="modal-descricao" class="text-gray-700 mb-4"></p>
+        <p id="modal-data-inicio" class="text-gray-600 mb-2"></p>
+        <p id="modal-data-fim" class="text-gray-600 mb-2"></p>
+        <p id="modal-cidade" class="text-gray-600 mb-2"></p>
+        <p id="modal-estado" class="text-gray-600 mb-2"></p>
+        <p id="modal-vagas" class="text-gray-600 mb-2"></p>
+        <button
+          id="inscreverBtn"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+          style="display: none"
+        >
+          Inscrever-se
+        </button>
+        <!-- Dropdown para listar ações -->
+        <div class="mb-4">
+          <select
+            id="select-acao"
+            class="w-full border-gray-300 rounded"
+            style="display: none"
+          >
+            <option value="">Selecione uma ação</option>
+          </select>
+        </div>
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 hidden"
+          id="convidarBtn"
+          style="display: none"
+        >
+          Convidar para ação
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Função para verificar o usuário logado
+      async function checkUser() {
+        try {
+          const response = await fetch("/checkUser", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          return data.uid;
+        } catch (error) {
+          console.error("Error checking user:", error);
+        }
+      }
+
+      // Função para obter dados do usuário
+      async function getUserData(uid) {
+        try {
+          const response = await fetch(`/user/${uid}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+
+      // Função para exibir nome do usuário
+      async function displayUserName() {
+        const uid = await checkUser();
+        if (uid) {
+          const userData = await getUserData(uid);
+          document.getElementById(
+            "textName"
+          ).innerText = `Bem-vindo, ${userData.nome}`;
+        }
+      }
+
+      // Função para atualizar o seletor de ação/voluntário
+      function updateRadioStyles() {
+        document.querySelectorAll('input[name="filter"]').forEach((input) => {
+          const checkmark = input.nextElementSibling.firstElementChild;
+          if (input.checked) {
+            checkmark.classList.remove("hidden");
+          } else {
+            checkmark.classList.add("hidden");
+          }
+        });
+      }
+
+      // Função para logout
+      function setupLogoutButton() {
+        document
+          .getElementById("logout-btn")
+          .addEventListener("click", async () => {
+            try {
+              const response = await fetch("/emailLogout", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+              if (response.ok) {
+                window.location.href = "/";
+              }
+              console.log(await response.json());
+            } catch (error) {
+              console.error("Error during logout:", error);
+            }
+          });
+      }
+
+      async function getUsers() {
+        try {
+          const response = await fetch(`/user/disponiveis`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
+      }
+
+      async function displayUsers() {
+        const users = await getUsers();
+        console.log(users);
+        if (users) {
+          document.querySelector(".grid").innerHTML = "";
+          users.forEach((user) => {
+            const linksImg = [
+              "https://acaosocial.metodista.org.br/2022/images/thumb-acaosocial.jpg",
+              "https://conteudo.imguol.com.br/c/entretenimento/79/2020/11/18/assistente-social-1605720525109_v2_450x450.jpg",
+              "https://static.wixstatic.com/media/599211_96b9ada6a5564346b71689b93ee7d203~mv2.jpg/v1/fill/w_450,h_450,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/599211_96b9ada6a5564346b71689b93ee7d203~mv2.jpg",
+              "https://assecampe.com.br/wp-content/uploads/elementor/thumbs/acao_social_da_creche_sao_gabriel-01-pjgh711ewyei3smp1vbukm27tzf7brrbjliahu6iok.jpg",
+              "https://revistanove.com.br/wp-content/uploads/2023/11/cenario-cultura-de-doacao-brasil-scaled-450x450.jpg",
+              "https://revistanove.com.br/wp-content/uploads/2019/07/rogerio-bomfim-cursos-santos-450x450.jpg",
+            ];
+            const img = linksImg[Math.floor(Math.random() * linksImg.length)];
+            const card = document.createElement("div");
+            card.classList.add(
+              "bg-white",
+              "p-4",
+              "rounded",
+              "shadow-md",
+              "hover:shadow-lg",
+              "transition-shadow"
+            );
+            card.innerHTML = `
+            <img
+            src="${img}"
+            alt="Imagem do Usuário"
+            class="mb-4 w-full rounded bg-cover bg-center relative"
+          />
+          <h2 class="text-lg font-bold mb-2 text-gray-800">
+            ${user.nome}
+          </h2>
+          <p class="text-gray-600">
+            Idade: ${user.idade}
+          </p>
+          <p class="text-gray-600">
+            Cidade: ${user.cidade}
+          </p>
+          <p class="text-gray-600">
+            Estado: ${user.estado}
+          </p>
+          <p class="text-gray-600">
+            País: ${user.pais}
+          </p>
+          <p class="text-gray-600">
+            Horas Totais: ${user.horasTotais}
+          </p>
+          <p class="text-gray-600">
+            Gênero: ${user.genero}
+          </p>
+            `;
+
+            card.addEventListener("click", () => openModalUser(user));
+            document.querySelector(".grid").appendChild(card);
+          });
+        }
+      }
+
+      async function loadUserActions() {
+        const idUsuarioEnvia = await checkUser();
+        // Carrega as ações que o usuário logado criou
+        fetch(`/getAcao/findMy/${idUsuarioEnvia}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Success:", data);
+            data.forEach((acao) => {
+              const option = document.createElement("option");
+              option.value = acao.id;
+              option.innerText = acao.nome;
+              document.getElementById("select-acao").appendChild(option);
+            });
+          })
+          .catch(function (error) {
+            console.error("Error:", error);
+          });
+      }
+
+      function openModalUser(user) {
+        console.log(user);
+        let idUsuarioRecebe = user.id;
+
+        document.getElementById("inscreverBtn").style.display = "none";
+        const convidarBtn = document.getElementById("convidarBtn");
+        convidarBtn.style.display = "block";
+        const selectAcao = document.getElementById("select-acao");
+        selectAcao.style.display = "block";
+        document.getElementById("modal-nome").innerText = user.nome;
+
+        document.getElementById(
+          "modal-descricao"
+        ).innerText = `Idade: ${user.idade}`;
+        document.getElementById(
+          "modal-data-inicio"
+        ).innerText = `Cidade: ${user.cidade}`;
+        document.getElementById(
+          "modal-data-fim"
+        ).innerText = `Estado: ${user.estado}`;
+        document.getElementById(
+          "modal-cidade"
+        ).innerText = `País: ${user.pais}`;
+        document.getElementById(
+          "modal-estado"
+        ).innerText = `Horas Totais: ${user.horasTotais}`;
+        document.getElementById(
+          "modal-vagas"
+        ).innerText = `Gênero: ${user.genero}`;
+        document.getElementById("modal").classList.remove("hidden");
+        setTimeout(() => {
+          document.querySelector("#modal > div").classList.remove("scale-95");
+        }, 100);
+
+        convidarBtn.replaceWith(convidarBtn.cloneNode(true));
+        document.getElementById("convidarBtn").addEventListener("click", () => {
+          (async function () {
+            const idUsuarioEnvia = await checkUser();
+            const idProjeto = document.getElementById("select-acao").value;
+            await convidarUsuario(idUsuarioEnvia, user.id, idProjeto);
+          })();
+        });
+      }
+
+      async function convidarUsuario(
+        idUsuarioEnvia,
+        idUsuarioRecebe,
+        idProjeto
+      ) {
+        // Envia o convite
+        fetch("/convite/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            descricao: "Convite para ação",
+            status: "Pendente",
+            idUsuarioEnvia: idUsuarioEnvia,
+            idUsuarioRecebe: idUsuarioRecebe,
+            idProjeto: idProjeto,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Success:", data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      // Função para obter ações sociais
+      async function getActions() {
+        try {
+          const response = await fetch(`/getAcao/all/`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error("Error fetching actions:", error);
+        }
+      }
+
+      // Função para exibir ações sociais
+      async function displayActions() {
+        const actions = await getActions();
+        if (actions) {
+          document.querySelector(".grid").innerHTML = "";
+          const linksImg = [
+            "https://acaosocial.metodista.org.br/2022/images/thumb-acaosocial.jpg",
+            "https://conteudo.imguol.com.br/c/entretenimento/79/2020/11/18/assistente-social-1605720525109_v2_450x450.jpg",
+            "https://static.wixstatic.com/media/599211_96b9ada6a5564346b71689b93ee7d203~mv2.jpg/v1/fill/w_450,h_450,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/599211_96b9ada6a5564346b71689b93ee7d203~mv2.jpg",
+            "https://assecampe.com.br/wp-content/uploads/elementor/thumbs/acao_social_da_creche_sao_gabriel-01-pjgh711ewyei3smp1vbukm27tzf7brrbjliahu6iok.jpg",
+            "https://revistanove.com.br/wp-content/uploads/2023/11/cenario-cultura-de-doacao-brasil-scaled-450x450.jpg",
+            "https://revistanove.com.br/wp-content/uploads/2019/07/rogerio-bomfim-cursos-santos-450x450.jpg",
+          ];
+
+          actions.forEach((acao) => {
+            const img = linksImg[Math.floor(Math.random() * linksImg.length)];
+
+            const card = document.createElement("div");
+            card.classList.add(
+              "bg-white",
+              "p-4",
+              "rounded",
+              "shadow-md",
+              "hover:shadow-lg",
+              "transition-shadow"
+            );
+            card.innerHTML = `
+              <img src="${img}" alt="Imagem do Card 1" class="mb-4 w-full rounded bg-cover bg-center relative" />
+              <h2 class="text-lg font-bold mb-2 text-gray-800">${acao.nome}</h2>
+              <p class="text-gray-600">${acao.descricao}</p>
+            `;
+
+            card.addEventListener("click", () => openModal(acao));
+            document.querySelector(".grid").appendChild(card);
+          });
+        }
+      }
+
+      function loadSelection() {
+        document.querySelectorAll('input[name="filter"]').forEach((input) => {
+          input.addEventListener("change", async (event) => {
+            const filterValue = event.target.value;
+            if (filterValue === "acao") {
+              console.log("acao");
+              // Carrega as ações
+              await displayActions();
+            } else if (filterValue === "usuario") {
+              console.log("usuario");
+              // Carrega os usuários
+              await displayUsers();
+            }
+            updateRadioStyles();
+          });
+        });
+      }
+      // Depois de carregar a página uma vez, ao mudar o filtro, carrega as ações ou usuários
+      loadSelection();
+
+      // Função para abrir o modal
+      function openModal(acao) {
+        let [diaInicio, mesInicio, anoInicio] = acao.dataInicio.split("-");
+        let [diaFim, mesFim, anoFim] = acao.dataFim.split("-");
+
+        document.getElementById("select-acao").style.display = "none";
+        const inscreverBtn = document.getElementById("inscreverBtn");
+        inscreverBtn.replaceWith(inscreverBtn.cloneNode(true));
+
+        document
+          .getElementById("inscreverBtn")
+          .addEventListener("click", () => {
+            (async function () {
+              await inscreverAcao(acao.id);
+            })();
+          });
+
+        document.getElementById("modal-nome").innerText = acao.nome;
+        document.getElementById("inscreverBtn").style.display = "block";
+        document.getElementById("convidarBtn").style.display = "none";
+        document.getElementById("modal-descricao").innerText = acao.descricao;
+        document.getElementById(
+          "modal-data-inicio"
+        ).innerText = `Data de Início: ${diaInicio}/${mesInicio}/${anoInicio}`;
+        document.getElementById(
+          "modal-data-fim"
+        ).innerText = `Data Final: ${diaFim}/${mesFim}/${anoFim}`;
+        document.getElementById(
+          "modal-cidade"
+        ).innerText = `Cidade: ${acao.cidade}`;
+        document.getElementById(
+          "modal-estado"
+        ).innerText = `Estado: ${acao.estado}`;
+        document.getElementById(
+          "modal-vagas"
+        ).innerText = `Quantidade de Vagas: ${acao.numeroVagas}`;
+        document.getElementById("modal").classList.remove("hidden");
+
+        setTimeout(() => {
+          document.querySelector("#modal > div").classList.remove("scale-95");
+        }, 100);
+      }
+
+      // Fechar o modal
+      function setupCloseModal() {
+        document.getElementById("close-modal").addEventListener("click", () => {
+          document.querySelector("#modal > div").classList.add("scale-95");
+          setTimeout(() => {
+            document.getElementById("modal").classList.add("hidden");
+          }, 200);
+        });
+
+        window.addEventListener("click", (e) => {
+          if (e.target === document.getElementById("modal")) {
+            document.querySelector("#modal > div").classList.add("scale-95");
+            setTimeout(() => {
+              document.getElementById("modal").classList.add("hidden");
+            }, 200);
+          }
+        });
+      }
+
+      // Função para inscrever-se em uma ação
+      async function inscreverAcao(id) {
+        try {
+          const response = await fetch(`/usuarioPorProjeto/create`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              funcao: "Desenvolvedor",
+              horasContadas: 0,
+              Projeto: id,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(
+              `error! status: ${response.status}, message: ${errorMessage}`
+            );
+          }
+
+          const result = await response.json();
+          alert("Inscrição realizada com sucesso!");
+          console.log(result);
+        } catch (error) {
+          console.error("Error during subscription:", error);
+        }
+      }
+
+      // Inicializar funções
+      async function init() {
+        await displayUserName();
+        setupLogoutButton();
+        await displayActions();
+        setupCloseModal();
+        // Chama updateRadioStyles para definir o estilo inicial
+        document.addEventListener("DOMContentLoaded", updateRadioStyles);
+        document.addEventListener("DOMContentLoaded", loadSelection);
+        await loadUserActions();
+      }
+
+      // Chamar a função de inicialização
+      init();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-white overflow-x-hidden">
+    <header class="flex items-center justify-between p-4">
+      <a href="/social"
+        ><img
+          src="https://i.ibb.co/2N3F070/vtm-pv-1.png"
+          alt="VTM Logo"
+          border="0"
+      /></a>
+      <nav>
+        <div class="container mx-auto flex justify-between items-center">
+          <div class="flex items-center justify-center space-x-6 text-center">
+            <a
+              href="/social"
+              class="text-black hover:text-customYellow font-semibold transition duration-300"
+              >Home</a
+            >
+            <a
+              href="/criarAcao"
+              class="text-black hover:text-customYellow font-semibold transition duration-300"
+              >Criar Ação</a
+            >
+          </div>
+        </div>
+      </nav>
+      <div class="flex items-center">
+        <div id="notification" class="relative mx-2">
+          <style>
+            @keyframes keyframes-fill {
+              0% {
+                opacity: 0;
+              }
+
+              25% {
+                transform: rotate(25deg);
+              }
+
+              50% {
+                transform: rotate(-20deg) scale(1.2);
+              }
+
+              75% {
+                transform: rotate(15deg);
+              }
+            }
+
+            .bell-regular {
+              position: absolute;
+              animation: keyframes-fill 0.5s;
+            }
+
+            .bell-solid {
+              position: absolute;
+              display: none;
+              animation: keyframes-fill 0.5s;
+            }
+
+            input:checked ~ .bell-regular {
+              display: none;
+            }
+
+            input:checked ~ .bell-solid {
+              display: block;
+            }
+
+            .popup input:checked ~ .popup-window {
+              transform: scale(1);
+              visibility: visible;
+              opacity: 1;
+            }
+
+            .popup input:checked ~ .overlay {
+              display: block;
+            }
+          </style>
+          <div class="fixed inset-0 z-50 flex-col items-center justify-center hidden bg-black bg-opacity-50"></div>
+          <label class="popup inline-block relative cursor-pointer">
+            <input type="checkbox" class="hidden" />
+            <div
+              class="flex justify-center items-center ml-5 py-2 text-[30px] fill-[#bfc2d8]"
+            >
+              <svg
+                class="bell-regular"
+                xmlns="http://www.w3.org/2000/svg"
+                height="0.7em"
+                viewBox="0 0 448 512"
+              >
+                <path
+                  d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"
+                ></path>
+              </svg>
+              <svg
+                class="bell-solid"
+                xmlns="http://www.w3.org/2000/svg"
+                height="0.7em"
+                viewBox="0 0 448 512"
+              >
+                <path
+                  d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"
+                ></path>
+              </svg>
+            </div>
+            <nav
+              id="popNotificacao"
+              class="popup-window z-50 absolute w-72 p-4 bg-gray-50 text-gray-700 rounded-lg right-0 shadow-lg border top-10 border-gray-300 transition-all transform scale-75 opacity-0 invisible"
+            >
+              <div
+                class="flex justify-between items-center mb-2"
+                id="notificacaoTitulo"
+              >
+                <span class="text-sm"
+                  >Você não tem nenhuma notificação no momento.</span
+                >
+                <button
+                  class="text-red-500 text-lg rounded-full hover:bg-customYellow p-1 transition duration-300"
+                >
+                  &times;
+                </button>
+              </div>
+            </nav>
+          </label>
+        </div>
+        <div id="profile-dropdown" class="relative ml-4">
+          <style>
+            .burger span {
+              height: 0.125em;
+              width: 1.125em;
+              background: #bfc2d8;
+              border-radius: 0.1875em;
+              position: absolute;
+              transition: 0.3s;
+            }
+
+            .burger span:nth-child(1) {
+              top: 0.625em;
+            }
+
+            .burger span:nth-child(2) {
+              bottom: 0.625em;
+            }
+
+            .burger span:nth-child(3) {
+              top: 50%;
+              transform: translateY(-50%);
+            }
+
+            .popup input:checked + .burger span:nth-child(1) {
+              top: 50%;
+              transform: translateY(-50%) rotate(45deg);
+            }
+
+            .popup input:checked + .burger span:nth-child(2) {
+              bottom: 50%;
+              transform: translateY(50%) rotate(-45deg);
+            }
+
+            .popup input:checked + .burger span:nth-child(3) {
+              opacity: 0;
+            }
+
+            .popup input:checked ~ .popup-window {
+              transform: scale(1);
+              visibility: visible;
+              opacity: 1;
+            }
+          </style>
+
+          <label class="popup inline-block">
+            <input type="checkbox" class="hidden" />
+            <div
+              class="burger flex items-center justify-center w-8 h-8 rounded-full relative cursor-pointer transition-all ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <nav
+              style="left: -400%"
+              class="popup-window absolute p-2 bg-gray-50 text-gray-700 rounded-lg shadow-lg border border-gray-300 top-12 transition-all transform scale-75 opacity-0 invisible"
+            >
+              <legend class="px-4 py-1 text-xs uppercase text-gray-500">
+                Perfil
+              </legend>
+              <ul class="m-0 p-0 list-none">
+                <li>
+                  <button
+                    onclick="window.location.href = '/perfil';"
+                    class="w-full flex items-center text-sm p-2 hover:bg-customYellow hover:text-customBlue-dark rounded-md gap-2 transition duration-300"
+                  >
+                    <svg
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      height="14"
+                      width="14"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="text-customBlue"
+                    >
+                      <path
+                        d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      ></path>
+                      <circle r="4" cy="7" cx="9"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span class="whitespace-nowrap">Ações Voluntárias</span>
+                  </button>
+                </li>
+                <hr class="my-2 border-t border-gray-300" />
+                <li>
+                  <button
+                    id="logout-btn"
+                    class="w-full flex items-center text-sm p-2 hover:bg-customYellow hover:text-customBlue-dark rounded-md gap-2 transition duration-300"
+                  >
+                    <svg
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      height="14"
+                      width="14"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="text-red-600"
+                    >
+                      <line y2="18" x2="6" y1="6" x1="18"></line>
+                      <line y2="18" x2="18" y1="6" x1="6"></line>
+                    </svg>
+                    <span class="whitespace-nowrap">Sair</span>
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <!-- Editar perfil -->
+    <main>
+      <div id="user-profile" class="flex justify-center">
+        <div id="cape" class="w-full h-56 rounded-b-2xl">
+          <img
+            id="cape-img"
+            src="https://placehold.co/500x200?text=Clique+em+editar+para+alterar+capa"
+            alt="Capa do perfil"
+            class="w-full h-56 object-cover rounded-b-2xl object-center"
+            style="object-fit: cover"
+          />
+        </div>
+        <div class="absolute mt-56 mr-80 block edit-button">
+          <i
+         id="edit-dropdown"
+         class="text-3xl fa-solid fa-edit text-customBlue px-4 py-2 text-sm font-bold border-2 border-transparent cursor-pointer"
+       ></i>
+          <div
+            class="dropdown-content hidden absolute z-10 w-20 h-6 shadow rounded-lg"
+          >
+            <a
+              id="edit-profile-link"
+              href="#"
+              class="text-xs font-semibold block px-2 py-1 text-customBlue-dark text-xs transition duration-100 rounded-lg hover:bg-customYellow"
+              >Editar perfil</a
+            >
+          </div>
+        </div>
+        <div
+          id="edit-profile-modal"
+          class="hidden fixed absolute z-10 inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center"
+        >
+          <div
+            class="bg-white p-4 rounded-lg justify-center items-center"
+            style="width: 300px; height: 500px"
+          >
+            <div class="flex-col items-center justify-center gap-8 mt-8">
+              <div
+                id="edit-bio"
+                style="margin-left: 60px"
+                class="bg-[#f3f4f6] w-36 p-6 rounded-lg shadow-md flex-col justify-center items-center text-center hover:bg-customYellow transition duration-300"
+              >
+                <button class="w-24 text-center" id="btnEditarBio">
+                  <i
+                    class="fa-solid fa-pen-to-square text-customBlue text-3xl"
+                  ></i>
+                  <p class="font-semibold mt-4">Editar bio</p>
+                </button>
+
+                <!-- Popup para editar bio -->
+                <div
+                  id="edit-bio-modal"
+                  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+                >
+                  <div
+                    class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm"
+                  >
+                    <h2 class="text-xl font-bold mb-4">Editar Bio</h2>
+                    <textarea
+                      id="new-bio-text"
+                      class="w-full p-2 border rounded mb-4"
+                      rows="4"
+                    ></textarea>
+                    <div class="flex justify-end">
+                      <button
+                        id="cancel-edit-bio"
+                        class="mr-2 px-4 py-2 bg-gray-500 text-white rounded"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        id="save-edit-bio"
+                        class="px-4 py-2 bg-blue-500 text-white rounded"
+                      >
+                        Enviar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="add-action" class="flex items-center justify-center">
+                <button
+                  id="btnCriarAcao"
+                  onclick="window.location.href = '/criarAcao';"
+                  style="width: 237px; margin-top: 50px"
+                  class="mt-40 shadow-md rounded-lg relative h-20 w-20 cursor-pointer flex items-center border border-gray-100 bg-gray-100 group hover:bg-gray-100 active:bg-gray-100 active:border-gray-100"
+                >
+                  <span
+                    class="text-black font-semibold ml-4 transform group-hover:translate-x-20 transition-all duration-300 text-sm"
+                    >Adicionar atividade</span
+                  >
+                  <span
+                    class="absolute right-0 h-full w-10 rounded-lg w-20 bg-customBlue flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300"
+                  >
+                    <svg
+                      id="sgvCriarAcao"
+                      class="svg w-8 text-white"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <line x1="12" x2="12" y1="5" y2="19"></line>
+                      <line x1="5" x2="19" y1="12" y2="12"></line>
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div class="flex items-center justify-center gap-8 mt-8">
+              <label
+                id="edit-profile-picture"
+                class="h-32 w-40 flex flex-col items-center justify-center gap-5 cursor-pointer bg-gray-100 p-6 rounded-lg shadow-md hover:bg-customYellow transition duration-300"
+              >
+                <div class="icon flex items-center justify-center">
+                  <svg
+                    class="h-10 fill-customBlue"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill=""
+                    viewBox="0 0 24 24"
+                  >
+                    <g stroke-width="0" id="SVGRepo_bgCarrier"></g>
+                    <g
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      id="SVGRepo_tracerCarrier"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        fill=""
+                        d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"
+                        clip-rule="evenodd"
+                        fill-rule="evenodd"
+                      ></path>
+                    </g>
+                  </svg>
+                </div>
+                <div class="text flex items-center justify-center">
+                  <span class="font-semibold text-black text-center"
+                    >Alterar foto</span
+                  >
+                </div>
+                <input type="file" id="file-foto" class="hidden" />
+              </label>
+              <label
+                id="edit-cape"
+                class="h-32 w-40 flex flex-col items-center justify-center gap-5 cursor-pointer bg-gray-100 p-6 rounded-lg shadow-md hover:bg-customYellow transition duration-300"
+              >
+                <div class="icon flex items-center justify-center">
+                  <svg
+                    class="h-10 fill-customBlue"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill=""
+                    viewBox="0 0 24 24"
+                  >
+                    <g stroke-width="0" id="SVGRepo_bgCarrier"></g>
+                    <g
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      id="SVGRepo_tracerCarrier"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        fill=""
+                        d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"
+                        clip-rule="evenodd"
+                        fill-rule="evenodd"
+                      ></path>
+                    </g>
+                  </svg>
+                </div>
+                <div class="text flex items-center justify-center">
+                  <span class="font-semibold text-black text-center"
+                    >Alterar capa</span
+                  >
+                </div>
+                <input type="file" id="file-capa" class="hidden" />
+              </label>
+            </div>
+            <button
+              id="close-modal"
+              class="absolute top-2 right-2 text-customBlue hover:text-customYellow"
+            >
+              <i class="fa-regular fa-circle-xmark text-2xl"></i>
+            </button>
+          </div>
+        </div>
+        <style>
+          #edit-profile-modal .bg-white {
+            position: relative;
+          }
+        </style>
+        <img
+          id="profile-picture"
+          src="https://placehold.co/208x208?text=Clique+em+editar+para+alterar+foto"
+          alt="Foto de perfil"
+          class="w-52 h-52 rounded-3xl absolute object-cover object-top border-2"
+          style="margin-top: 115px; object-fit: cover;"
+        />
+        <button
+          id="button"
+          class="absolute right-8 text-white bg-customBlue p-3 rounded-full transition duration-300 hover:bg-customBlue-dark"
+          style="margin-top: 195px"
+        >
+          <i id="favorite" class="fa-solid fa-star p-1"></i>
+        </button>
+      </div>
+      <div class="flex flex-col items-center justify-center space-x-4">
+        <h1 class="font-bold text-2xl mt-28" id="textName"></h1>
+        <div
+          id="bio"
+          class="shadow-md flex justify-center items-start mt-10 px-8 bg-[#fbfbfb] py-10 max-w-3xl rounded-xl"
+        >
+          <img
+            src="https://i.ibb.co/tqJGD14/Aspas.png"
+            alt="Aspas"
+            class="mb-1 bo-0 p-2 pr-4"
+            style="margin: -8px"
+          />
+          <p id="bio-text"></p>
+        </div>
+
+        <!-- acao -->
+        <!-- Conteúdo -->
+        <div class="container mx-auto mt-20 px-6 py-6">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="actions">
+            <!-- Card -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="bg-customBlue mt-8 flex flex-col items-center justify-center text-white"
+    >
+      <!--
+    <p class="text-[#c7c7c7] py-8 text-center">
+      VTM é um acelerador que centrifica tudo relacionado a trabalhos
+      voluntários<br />
+      em nossa plataforma você encontrará diversos trabalhos
+    </p>
+     <nav>
+      <div class="flex justify-center font-bold px-10">
+        <a class="cursor-pointer px-4" src="">Sobre Nós</a>
+        <a class="cursor-pointer px-4" src="">Nossa Missão</a>
+        <a class="text-customYellow cursor-pointer px-4" src=""
+          >Ações Sociais</a
+        >
+        <a class="cursor-pointer px-4" src="">Entre em Contato</a>
+      </div>
+    </nav>
+    <div id="newsletter" class="mt-10 h-full">
+      <h3 class="text-center font-bold text-2xl">Assine Nossa Newsletter</h3>
+      <div class="flex flex-col md:flex-row mt-4">
+        <input
+          placeholder="Insira o seu e-mail"
+          class="w-full md:w-auto h-10 p-4 text-lg text-black rounded-3xl mb-4 md:mb-0 mr-0 md:mr-6 focus:border-customBlue"
+          name="email"
+          type="email"
+        />
+        <button
+          class="flex items-center justify-center h-10 bg-customYellow no-underline p-4 text-lg text-white rounded-3xl cursor-pointer font-bold"
+        >
+          Inscrever
+        </button>
+      </div>
+    </div> -->
+      <div class="mt-4 mb-2 text-[#c7c7c7] p-4 text-center">
+        <p>Copyright © VTM 2024. Todos os direitos reservados.</p>
+        <p>
+          Política de Privacidade | Política de usuário | Termos e Condições
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        initializePerfil();
+      });
+
+      function initializePerfil() {
+        checkUserPerfil().then((userId) => {
+          getAcaoUserPerfil(userId);
+          if (userId) {
+            getUserDataPerfil(userId).then((userData) => {
+              if (userData) {
+                updateUserUIPerfil(userData);
+              }
+            });
+          }
+        });
+
+        setupLogoutButton();
+        setupModalClose();
+      }
+
+      async function checkUserPerfil() {
+        try {
+          const response = await fetch("/checkUser", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          console.log("Success:", data.uid);
+          return data.uid;
+        } catch (error) {
+          console.error("Error:", error);
+          return null;
+        }
+      }
+
+      async function getUserDataPerfil(uid) {
+        try {
+          const response = await fetch(`/user/${uid}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          console.log("Success:", data);
+          return data;
+        } catch (error) {
+          console.error("Error:", error);
+          return null;
+        }
+      }
+
+      function updateUserUIPerfil(user) {
+        document.getElementById("textName").innerText = `${user.nome}`;
+        document.getElementById("bio-text").innerText = `${user.bio}`;
+        document.getElementById("profile-picture").src = user.foto;
+        document.getElementById("cape-img").src = user.capa;
+      }
+
+      async function getAcaoUserPerfil(uidUser) {
+        console.log(uidUser, "uidUser");
+        try {
+          const response = await fetch(`/getAcao/findMy/${uidUser}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          console.log("Success:", data);
+          populateAcaoCards(data);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      function populateAcaoCards(acoes) {
+        acoes.forEach((acao) => {
+          const card = createAcaoCard(acao, acao.linkImg);
+          document.getElementById("actions").appendChild(card);
+        });
+      }
+
+      document.getElementById("actions").onclick = function (event) {
+        
+       // window.location.href = "/verAcao";
+        };
+
+      function createAcaoCard(acao, img) {
+        const card = document.createElement("div");
+        card.classList.add(
+          "bg-white",
+          "rounded-lg",
+          "shadow-md",
+          "overflow-hidden",
+        );
+        card.innerHTML = `
+        <img
+                  src="${img}"
+                  alt="Imagem do Card 1"
+                  class=" w-full h-80 w-full rounded-t object-cover object-center relative"
+                />
+                <div class="
+                  p-4
+                  bg-white
+                  border-t
+                  border-gray-200
+                  rounded-b-lg
+                  text-center
+                
+                " >
+                    <h2 class="text-lg font-bold mb-2 text-gray-800">
+                    ${acao.nome}
+                    </h2>
+                    <p class="text-gray-600">
+                      ${acao.descricao}
+                    </p>
+                </div>
+        `;
+
+        card.addEventListener("click", () => {
+          console.log(acao.id);
+          window.location.href = `/pages/verAcao/${acao.id}`;
+        });
+        return card;
+      }
+
+      // Função para abrir o modal de edição
+      function openEditModal(acao) {
+        console.log(acao);
+
+        document.getElementById("edit-modal-nome").innerText = acao.nome;
+        document.getElementById("edit-descricao").value = acao.descricao;
+        document.getElementById("edit-data-inicio").value = acao.dataInicio;
+        document.getElementById("edit-data-fim").value = acao.dataFim;
+        document.getElementById("edit-cidade").value = acao.cidade;
+        document.getElementById("edit-estado").value = acao.estado;
+        document.getElementById("edit-vagas").value = acao.numeroVagas;
+        document.getElementById("edit-modal").classList.remove("hidden");
+        setTimeout(() => {
+          document
+            .querySelector("#edit-modal > div")
+            .classList.remove("scale-95");
+        }, 100);
+
+        document.getElementById("edit-form").onsubmit = function (event) {
+          event.preventDefault();
+          saveEditAction(acao.id);
+        };
+      }
+
+      // Função para salvar a edição
+      function saveEditAction(id) {
+        const descricao = document.getElementById("edit-descricao").value;
+        const dataInicio = document.getElementById("edit-data-inicio").value;
+        const dataFim = document.getElementById("edit-data-fim").value;
+        const cidade = document.getElementById("edit-cidade").value;
+        const estado = document.getElementById("edit-estado").value;
+        const vagas = document.getElementById("edit-vagas").value;
+
+        fetch(`/updateAcao/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            descricao,
+            dataInicio,
+            dataFim,
+            cidade,
+            estado,
+            numeroVagas: vagas,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Success:", data);
+            location.reload();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function openModalPerfil(acao) {
+        console.log(acao);
+
+        loadParticipantes(acao.id);
+
+        let [diaInicio, mesInicio, anoInicio] = acao.dataInicio.split("-");
+        let [diaFim, mesFim, anoFim] = acao.dataFim.split("-");
+
+        document.getElementById("modal-nome").innerText = acao.nome;
+        document.getElementById("modal-descricao").innerText = acao.descricao;
+        document.getElementById(
+          "modal-data-inicio"
+        ).innerText = `Data de Início: ${diaInicio}/${mesInicio}/${anoInicio}`;
+        document.getElementById(
+          "modal-data-fim"
+        ).innerText = `Data Final: ${diaFim}/${mesFim}/${anoFim}`;
+        document.getElementById(
+          "modal-cidade"
+        ).innerText = `Cidade: ${acao.cidade}`;
+        document.getElementById(
+          "modal-estado"
+        ).innerText = `Estado: ${acao.estado}`;
+        document.getElementById(
+          "modal-vagas"
+        ).innerText = `Quantidade de Vagas: ${acao.numeroVagas}`;
+        document.getElementById("modal").classList.remove("hidden");
+
+        //remove os listeners para evitar duplicação
+        let btn = document.getElementById("edit-action-btn");
+        btn.replaceWith(btn.cloneNode(true));
+
+        //verifica se clicou no botao de editar
+        document
+          .getElementById("edit-action-btn")
+          .addEventListener("click", () => {
+            openEditModal(acao);
+
+            document.getElementById("modal").classList.add("hidden");
+            document.getElementById("listParticipante").innerHTML = "";
+          });
+
+          
+
+        setTimeout(() => {
+          document.querySelector("#modal > div").classList.remove("scale-95");
+        }, 100);
+      }
+
+      async function loadParticipantes(idProjeto) {
+        // buscar participantes da ação no banco
+        console.log(idProjeto);
+        try {
+          const response = await fetch(`/usuarioPorProjeto/find/${idProjeto}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          console.log("Success:", data);
+
+          populateParticipantes(data);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      function populateParticipantes(participantes) {
+        const listParticipante = document.getElementById("listParticipante");
+        listParticipante.innerHTML = "";
+        if (participantes.length === 0) {
+          listParticipante.innerHTML = "<p>Nenhum participante</p>";
+        } else {
+          participantes.forEach((participante) => {
+            const li = createCardParticipante(participante);
+            listParticipante.appendChild(li);
+          });
+        }
+      }
+
+      function createCardParticipante(participante) {
+        const li = document.createElement("li");
+        li.classList.add("flex", "items-center", "mb-2");
+        li.innerHTML = `
+          <img
+            src="https://i.ibb.co/ZfYppNR/image.png"
+            alt="Foto do Participante 1"
+            class="w-12 h-12 rounded-full mr-2"
+          />
+          <span>${participante.PerfilUsuario}</span>
+        `;
+        return li;
+      }
+
+      function setupLogoutButton() {
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          fetch("/emailLogout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                window.location.href = "/";
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+      }
+
+      // Função para abrir o modal de edição
+      function openEditModal(acao) {
+        console.log(acao);
+
+        document.getElementById("edit-modal-nome").innerText = acao.nome;
+        document.getElementById("edit-descricao").value = acao.descricao;
+        document.getElementById("edit-data-inicio").value = acao.dataInicio;
+        document.getElementById("edit-data-fim").value = acao.dataFim;
+        document.getElementById("edit-cidade").value = acao.cidade;
+        document.getElementById("edit-estado").value = acao.estado;
+        document.getElementById("edit-vagas").value = acao.numeroVagas;
+        document.getElementById("edit-modal").classList.remove("hidden");
+        setTimeout(() => {
+          document
+            .querySelector("#edit-modal > div")
+            .classList.remove("scale-95");
+        }, 100);
+
+        document.getElementById("edit-form").onsubmit = function (event) {
+          event.preventDefault();
+          saveEditAction(acao.id);
+        };
+      }
+
+      // Função para salvar a edição
+      function saveEditAction(id) {
+        const descricao = document.getElementById("edit-descricao").value;
+        const dataInicio = document.getElementById("edit-data-inicio").value;
+        const dataFim = document.getElementById("edit-data-fim").value;
+        const cidade = document.getElementById("edit-cidade").value;
+        const estado = document.getElementById("edit-estado").value;
+        const vagas = document.getElementById("edit-vagas").value;
+
+        fetch(`/updateAcao/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            descricao,
+            dataInicio,
+            dataFim,
+            cidade,
+            estado,
+            numeroVagas: vagas,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Success:", data);
+            location.reload();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function setupModalClose() {
+        document.getElementById("close-modal").addEventListener("click", () => {
+          document.querySelector("#modal > div").classList.add("scale-95");
+          setTimeout(() => {
+            document.getElementById("modal").classList.add("hidden");
+            document.getElementById("listParticipante").innerHTML = "";
+          }, 200);
+        });
+
+        window.addEventListener("click", (e) => {
+          if (e.target === document.getElementById("modal")) {
+            document.querySelector("#modal > div").classList.add("scale-95");
+            setTimeout(() => {
+              document.getElementById("modal").classList.add("hidden");
+              document.getElementById("listParticipante").innerHTML = "";
+            }, 200);
+          }
+        });
+
+        // Fechar o modal
+        document.getElementById("close-modal").addEventListener("click", () => {
+          document.querySelector("#modal > div").classList.add("scale-95");
+          setTimeout(() => {
+            document.getElementById("modal").classList.add("hidden");
+          }, 200);
+        });
+
+        // Fechar o modal de edição
+        document
+          .getElementById("close-edit-modal")
+          .addEventListener("click", () => {
+            document
+              .querySelector("#edit-modal > div")
+              .classList.add("scale-95");
+            setTimeout(() => {
+              document.getElementById("edit-modal").classList.add("hidden");
+            }, 200);
+          });
+
+        // Fechar o modal ao clicar fora dele
+        window.addEventListener("click", (e) => {
+          if (e.target === document.getElementById("modal")) {
+            document.querySelector("#modal > div").classList.add("scale-95");
+            setTimeout(() => {
+              document.getElementById("modal").classList.add("hidden");
+              document.getElementById("listParticipante").innerHTML = "";
+            }, 200);
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Função para alternar a classe do ícone de favorito
+        const toggleFavorite = () => {
+          const favoriteIcon = document.getElementById("favorite");
+          favoriteIcon.classList.toggle("text-customYellow");
+        };
+
+        // Função para exibir/ocultar sobreposições
+        const toggleOverlays = (display) => {
+          document.querySelectorAll(".overlay").forEach((overlay) => {
+            overlay.style.display = display ? "block" : "none";
+          });
+        };
+
+        // Função para desmarcar caixas de seleção e ocultar sobreposições
+        const uncheckCheckboxesAndHideOverlays = () => {
+          document
+            .querySelectorAll('.popup input[type="checkbox"]')
+            .forEach((checkbox) => {
+              checkbox.checked = false;
+            });
+          toggleOverlays(false);
+        };
+
+        // Configurações de eventos
+        const setupEventListeners = () => {
+          // Alternar favorito ao clicar no botão
+          const button = document.getElementById("button");
+          button.addEventListener("click", toggleFavorite);
+
+          // Mostrar/ocultar sobreposições ao marcar/desmarcar caixas de seleção
+          document
+            .querySelectorAll('.popup input[type="checkbox"]')
+            .forEach((checkbox) => {
+              checkbox.addEventListener("change", function () {
+                toggleOverlays(this.checked);
+              });
+            });
+
+          // Ocultar sobreposições ao clicar nelas
+          document.querySelectorAll(".overlay").forEach((overlay) => {
+            overlay.addEventListener("click", uncheckCheckboxesAndHideOverlays);
+          });
+
+          // Ocultar sobreposições ao clicar nos botões das janelas popup
+          document
+            .querySelectorAll(".popup-window button")
+            .forEach((button) => {
+              button.addEventListener(
+                "click",
+                uncheckCheckboxesAndHideOverlays
+              );
+            });
+
+          // Dropdown e modal de edição de perfil
+          const dropdownIcon = document.getElementById("edit-dropdown");
+          const dropdownContent = document.querySelector(".dropdown-content");
+          const editProfileLink = document.getElementById("edit-profile-link");
+          const editProfileModal =
+            document.getElementById("edit-profile-modal");
+          const closeModal = document.getElementById("close-modal");
+
+          dropdownIcon.addEventListener("click", (event) => {
+            dropdownContent.classList.toggle("hidden");
+            event.stopPropagation();
+          });
+
+          document.getElementById("cape").addEventListener("click", (event) => {
+            editProfileModal.classList.remove("hidden");
+            event.stopPropagation();
+          });
+
+          document.addEventListener("click", (event) => {
+            if (
+              !dropdownContent.contains(event.target) &&
+              !dropdownIcon.contains(event.target)
+            ) {
+              dropdownContent.classList.add("hidden");
+            }
+          });
+
+          editProfileLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            editProfileModal.classList.remove("hidden");
+          });
+
+
+          closeModal.addEventListener("click", () => {
+            editProfileModal.classList.add("hidden");
+          });
+
+          document.addEventListener("click", (event) => {
+            if (
+              !editProfileModal.contains(event.target) &&
+              !editProfileLink.contains(event.target) &&
+              !closeModal.contains(event.target)
+            ) {
+              editProfileModal.classList.add("hidden");
+            }
+          });
+        };
+
+        // update
+        // Função para exibir o popup de edição de bio
+        const showEditBioPopup = () => {
+          document.getElementById("edit-bio-modal").classList.remove("hidden");
+          document.getElementById("add-action").classList.add("hidden");
+        };
+
+        // Função para ocultar o popup de edição de bio
+        const hideEditBioPopup = () => {
+          document.getElementById("edit-bio-modal").classList.add("hidden");
+          document.getElementById("add-action").classList.remove("hidden");
+        };
+
+        // Função para lidar com o clique no botão de enviar
+        async function saveEditBio() {
+          const newBioText = document.getElementById("new-bio-text").value;
+          await checkUserPerfil().then((userId) => {
+            console.log(userId, "userId");
+            if (userId) {
+              fetch(`/user/update/${userId}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  bio: newBioText,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("Success:", data);
+                  location.reload();
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+              hideEditBioPopup();
+            }
+          });
+        }
+
+        const fileInput = document.getElementById("file-foto");
+        fileInput.addEventListener("change", async (event) => {
+          if (event.target.files && event.target.files.length > 0) {
+            // Obter o arquivo carregado
+            const file = event.target.files[0];
+            console.log("Arquivo carregado:", file.name);
+            await updateImage();
+          }
+        });
+
+        async function updateImage() {
+          const fileInput = document.getElementById("file-foto");
+          const file = fileInput.files[0];
+
+          const formData = new FormData();
+          formData.append("key", "4f7faf3f4c1b5ea518d9bcf6230e7c60"); // Substitua pela sua chave de API
+          formData.append("image", file);
+          formData.append("name", file.name); // Nome do arquivo
+
+          const response = await fetch("https://api.imgbb.com/1/upload", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          const imageUrl = data.data.url;
+          console.log(imageUrl);
+          await checkUserPerfil().then((userId) => {
+            console.log(userId, "userId");
+            if (userId) {
+              fetch(`/user/update/${userId}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  foto: imageUrl,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("Success:", data);
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+            }
+          });
+          document.getElementById("profile-picture").src = imageUrl;
+        }
+
+        const fileInputCape = document.getElementById("file-capa");
+        fileInputCape.addEventListener("change", async (event) => {
+          if (event.target.files && event.target.files.length > 0) {
+            // Obter o arquivo carregado
+            const file = event.target.files[0];
+            console.log("Arquivo carregado:", file.name);
+            await updateImageCape();
+          }
+        });
+
+        async function updateImageCape() {
+          const fileInput = document.getElementById("file-capa");
+          const file = fileInput.files[0];
+
+          const formDataCape = new FormData();
+          formDataCape.append("key", "4f7faf3f4c1b5ea518d9bcf6230e7c60"); // Substitua pela sua chave de API
+          formDataCape.append("image", file);
+          formDataCape.append("name", file.name); // Nome do arquivo
+
+          const response = await fetch("https://api.imgbb.com/1/upload", {
+            method: "POST",
+            body: formDataCape,
+          });
+          const data = await response.json();
+          const imageUrl = data.data.url;
+          console.log(imageUrl);
+          await checkUserPerfil().then((userId) => {
+            console.log(userId, "userId");
+            if (userId) {
+              fetch(`/user/update/${userId}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  capa: imageUrl,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("Success:", data);
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+            }
+          });
+          document.getElementById("cape-img").src = imageUrl;
+        }
+
+        // Adicionar eventos aos botões do popup de edição de bio
+        document
+          .getElementById("btnEditarBio")
+          .addEventListener("click", showEditBioPopup);
+        document
+          .getElementById("cancel-edit-bio")
+          .addEventListener("click", hideEditBioPopup);
+        document
+          .getElementById("save-edit-bio")
+          .addEventListener("click", saveEditBio);
+
+        // Inicializar eventos
+        setupEventListeners();
+      });
+    </script>
+  </body>
+</html>

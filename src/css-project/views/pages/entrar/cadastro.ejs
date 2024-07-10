@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center h-screen p-4">
+    <div
+      class="container mx-auto flex shadow-lg rounded-3xl h-full overflow-hidden"
+    >
+      <div
+        class="w-1/2 hidden lg:block bg-cover bg-center"
+        style="
+          background-image: url('https://i.ibb.co/Cs6Wcm3/Pexels-Photo-by-Mikhail-Nilov.png');
+        "
+      ></div>
+      <div
+        class="w-full lg:w-1/2 bg-white flex flex-col justify-center items-center p-6 md:p-12 overflow-y-auto"
+      >
+        <img
+          src="https://i.ibb.co/Sxhnwjt/vtm-pv-colorido.png"
+          class="w-32 mb-8"
+          alt="Logo"
+        />
+        <div class="w-full max-w-md">
+          <h2
+            class="text-2xl lg:text-4xl text-blue-600 font-bold text-center mb-6"
+          >
+            Cadastro
+          </h2>
+          <form id="register-form">
+            <div id="step1" class="step">
+              <div class="mb-4">
+                <label for="name" class="block text-blue-600 font-bold mb-1"
+                  >Nome:</label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Nome Completo"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label for="email" class="block text-blue-600 font-bold mb-1"
+                  >E-mail:</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="email@exemplo.com"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label for="password" class="block text-blue-600 font-bold mb-1"
+                  >Senha:</label
+                >
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="********"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <button
+                type="button"
+                class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700"
+                id="next1"
+              >
+                Próximo
+              </button>
+            </div>
+
+            <div id="step2" class="step hidden">
+              <div class="mb-4">
+                <label for="city" class="block text-blue-600 font-bold mb-1"
+                  >Cidade:</label
+                >
+                <input
+                  type="text"
+                  id="city"
+                  placeholder="Cidade"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label for="state" class="block text-blue-600 font-bold mb-1"
+                  >Estado:</label
+                >
+                <input
+                  type="text"
+                  id="state"
+                  placeholder="Estado"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label for="country" class="block text-blue-600 font-bold mb-1"
+                  >Pais:</label
+                >
+                <input
+                  type="text"
+                  id="country"
+                  placeholder="Pais"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div class="flex justify-between">
+                <button
+                  type="button"
+                  class="w-1/3 py-3 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-700"
+                  id="prev1"
+                >
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="w-1/3 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700"
+                  id="next2"
+                >
+                  Próximo
+                </button>
+              </div>
+            </div>
+
+            <div id="step3" class="step hidden">
+              <div class="mb-4">
+                <label for="age" class="block text-blue-600 font-bold mb-1"
+                  >Idade:</label
+                >
+                <input
+                  type="number"
+                  id="age"
+                  placeholder="Idade"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label for="gender" class="block text-blue-600 font-bold mb-1"
+                  >Gênero:</label
+                >
+                <select
+                  id="gender"
+                  class="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="feminino">Feminino</option>
+                  <option value="outros">Outros</option>
+                  <option value="prefiro-nao-identificar">
+                    Prefiro não identificar
+                  </option>
+                </select>
+              </div>
+              <div class="flex justify-between">
+                <button
+                  type="button"
+                  class="w-1/3 py-3 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-700"
+                  id="prev2"
+                >
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="w-1/3 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700"
+                  id="signin"
+                >
+                  Cadastrar-se
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="text-center mt-6">
+            <p>
+              Já possui uma conta?
+              <a href="/login" class="text-blue-600 hover:underline">Entrar</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      document.getElementById("next1").addEventListener("click", () => {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (name && email && password) {
+          document.getElementById("step1").classList.add("hidden");
+          document.getElementById("step2").classList.remove("hidden");
+        } else {
+          alert("Preencha todos os campos.");
+        }
+      });
+
+      document.getElementById("prev1").addEventListener("click", () => {
+        document.getElementById("step2").classList.add("hidden");
+        document.getElementById("step1").classList.remove("hidden");
+      });
+
+      document.getElementById("next2").addEventListener("click", () => {
+        const city = document.getElementById("city").value;
+        const state = document.getElementById("state").value;
+        const country = document.getElementById("country").value;
+
+        if (city && state && country) {
+          document.getElementById("step2").classList.add("hidden");
+          document.getElementById("step3").classList.remove("hidden");
+        } else {
+          alert("Preencha todos os campos.");
+        }
+      });
+
+      document.getElementById("prev2").addEventListener("click", () => {
+        document.getElementById("step3").classList.add("hidden");
+        document.getElementById("step2").classList.remove("hidden");
+      });
+
+      document.getElementById("signin").addEventListener("click", () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const gender = document.getElementById("gender").value;
+        const age = document.getElementById("age").value;
+        const city = document.getElementById("city").value;
+        const state = document.getElementById("state").value;
+        const country = document.getElementById("country").value;
+        const name = document.getElementById("name").value;
+
+        if (
+          email &&
+          password &&
+          gender &&
+          age &&
+          city &&
+          state &&
+          country &&
+          name
+        ) {
+          fetch("/emailSignUp", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Success:", data);
+              if (data.error) {
+                alert(data.error);
+                return;
+              }
+              fetch("/user", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  id: data.user.uid,
+                  email: email,
+                  senha: password,
+                  idade: age,
+                  cidade: city,
+                  estado: state,
+                  pais: country,
+                  nome: name,
+                  genero: gender,
+                  horasTotais: 0,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("Success:", data);
+                  if (data.error) {
+                    alert(data.error);
+                    return;
+                  }
+                  window.location.href = "/social";
+                })
+                .catch((error) =>
+                  alert(
+                    "Erro ao cadastrar usuário. Tente novamente mais tarde."
+                  )
+                );
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Erro ao fazer login. Tente novamente mais tarde.");
+            });
+        } else {
+          alert("Preencha todos os campos.");
+        }
+      });
+    </script>
+  </body>
+</html>

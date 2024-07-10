@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <% var additionalScripts = `
+    <script src="/js/home.js"></script>
+    ` %>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+
+  <body class="overflow-x-hidden bg-[#fdfdfd]">
+    <!-- Navbar -->
+    <header class="flex items-center justify-between p-4">
+      <img
+        src="https://i.ibb.co/2N3F070/vtm-pv-1.png"
+        alt="Logo Parceiros Voluntários"
+        class="p-2"
+      />
+      <div class="flex items-center">
+        <a href="/perfil" class="flex items-center">
+          <img
+            id="imgUser"
+            class="w-10 h-10 rounded-full mr-2 cursor-pointer bg-cover bg-center object-top"
+            style="object-fit: cover"
+            src="https://i.ibb.co/ZfYppNR/image.png"
+            alt="Foto do usuário"
+          />
+          <span id="textName" class="hidden md:inline"></span>
+        </a>
+        <div id="notification" class="relative mx-2">
+          <style>
+            @keyframes keyframes-fill {
+              0% {
+                opacity: 0;
+              }
+
+              25% {
+                transform: rotate(25deg);
+              }
+
+              50% {
+                transform: rotate(-20deg) scale(1.2);
+              }
+
+              75% {
+                transform: rotate(15deg);
+              }
+            }
+
+            .bell-regular {
+              position: absolute;
+              animation: keyframes-fill 0.5s;
+            }
+
+            .bell-solid {
+              position: absolute;
+              display: none;
+              animation: keyframes-fill 0.5s;
+            }
+
+            input:checked ~ .bell-regular {
+              display: none;
+            }
+
+            input:checked ~ .bell-solid {
+              display: block;
+            }
+
+            .popup input:checked ~ .popup-window {
+              transform: scale(1);
+              visibility: visible;
+              opacity: 1;
+            }
+
+            .popup input:checked ~ .overlay {
+              display: block;
+            }
+          </style>
+          <div
+            class="absolute inset-0 z-50 flex-col items-center justify-center hidden"
+          ></div>
+          <label class="popup inline-block relative cursor-pointer">
+            <input type="checkbox" class="hidden" id="notificacao" />
+            <div
+              class="flex justify-center items-center ml-5 py-2 text-[30px] fill-[#bfc2d8]"
+            >
+              <svg
+                class="bell-regular"
+                xmlns="http://www.w3.org/2000/svg"
+                height="0.7em"
+                viewBox="0 0 448 512"
+              >
+                <path
+                  d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"
+                ></path>
+              </svg>
+              <svg
+                class="bell-solid"
+                xmlns="http://www.w3.org/2000/svg"
+                height="0.7em"
+                viewBox="0 0 448 512"
+              >
+                <path
+                  d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"
+                ></path>
+              </svg>
+            </div>
+            <nav
+              class="popup-window absolute w-72 p-4 bg-gray-50 text-gray-700 rounded-lg right-0 shadow-lg border top-10 border-gray-300 transition-all transform scale-75 opacity-0 invisible"
+            >
+              <div
+                class="flex flex-col justify-between items-center mb-2"
+                id="popNotificacao"
+              >
+                <span class="text-sm" id="notificacaoTitulo"
+                  >Você não tem nenhuma notificação no momento.</span
+                >
+              </div>
+            </nav>
+          </label>
+          <script>
+            // Fechar o popup ao clicar fora dele
+            document
+              .querySelectorAll('.popup input[type="checkbox"]')
+              .forEach((checkbox) => {
+                checkbox.addEventListener("change", function () {
+                  document.querySelectorAll(".overlay").forEach((overlay) => {
+                    overlay.style.display = this.checked ? "block" : "none";
+                  });
+                });
+              });
+
+            document.querySelectorAll(".overlay").forEach((overlay) => {
+              overlay.addEventListener("click", () => {
+                document
+                  .querySelectorAll('.popup input[type="checkbox"]')
+                  .forEach((checkbox) => {
+                    checkbox.checked = false;
+                    overlay.style.display = "none";
+                  });
+              });
+            });
+
+            // Fechar o popup ao clicar no "X"
+            document
+              .querySelectorAll(".popup-window button")
+              .forEach((button) => {
+                button.addEventListener("click", () => {
+                  document
+                    .querySelectorAll('.popup input[type="checkbox"]')
+                    .forEach((checkbox) => {
+                      checkbox.checked = false;
+                      document
+                        .querySelectorAll(".overlay")
+                        .forEach((overlay) => {
+                          overlay.style.display = "none";
+                        });
+                    });
+                });
+              });
+          </script>
+        </div>
+        <div id="profile-dropdown" class="relative ml-4">
+          <style>
+            .burger span {
+              height: 0.125em;
+              width: 1.125em;
+              background: #bfc2d8;
+              border-radius: 0.1875em;
+              position: absolute;
+              transition: 0.3s;
+            }
+
+            .burger span:nth-child(1) {
+              top: 0.625em;
+            }
+
+            .burger span:nth-child(2) {
+              bottom: 0.625em;
+            }
+
+            .burger span:nth-child(3) {
+              top: 50%;
+              transform: translateY(-50%);
+            }
+
+            .popup input:checked + .burger span:nth-child(1) {
+              top: 50%;
+              transform: translateY(-50%) rotate(45deg);
+            }
+
+            .popup input:checked + .burger span:nth-child(2) {
+              bottom: 50%;
+              transform: translateY(50%) rotate(-45deg);
+            }
+
+            .popup input:checked + .burger span:nth-child(3) {
+              opacity: 0;
+            }
+
+            .popup input:checked ~ .popup-window {
+              transform: scale(1);
+              visibility: visible;
+              opacity: 1;
+            }
+          </style>
+
+          <label class="popup inline-block">
+            <input type="checkbox" class="hidden" />
+            <div
+              class="burger flex items-center justify-center w-8 h-8 rounded-full relative cursor-pointer transition-all ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <nav
+              style="left: -400%"
+              class="popup-window absolute p-2 bg-gray-50 text-gray-700 rounded-lg shadow-lg border border-gray-300 top-12 transition-all transform scale-75 opacity-0 invisible"
+            >
+              <legend class="px-4 py-1 text-xs uppercase text-gray-500">
+                Perfil
+              </legend>
+              <ul class="m-0 p-0 list-none">
+                <li>
+                  <button
+                    onclick="window.location.href = '/perfil'"
+                    class="w-full flex items-center text-sm p-2 hover:bg-customYellow hover:text-customBlue-dark transition duration-200 rounded-md gap-2"
+                  >
+                    <svg
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      height="14"
+                      width="14"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="text-customBlue"
+                    >
+                      <path
+                        d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      ></path>
+                      <circle r="4" cy="7" cx="9"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span class="whitespace-nowrap">Ações Voluntárias</span>
+                  </button>
+                </li>
+                <hr class="my-2 border-t border-gray-300" />
+                <li>
+                  <button
+                    id="logout-btn"
+                    class="w-full flex items-center text-sm p-2 hover:bg-customYellow hover:text-customBlue-dark transition duration-200 rounded-md gap-2"
+                  >
+                    <svg
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      height="14"
+                      width="14"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="text-red-600"
+                    >
+                      <line y2="18" x2="6" y1="6" x1="18"></line>
+                      <line y2="18" x2="18" y1="6" x1="6"></line>
+                    </svg>
+                    <span class="whitespace-nowrap">Sair</span>
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <hr />
+
+    <main
+      class="flex flex-col items-center justify-center mx-auto text-center px-8"
+    >
+      <h1 class="text-3xl text-customBlue mt-8 font-bold">Ações Sociais</h1>
+      <p class="text-[#c7c7c7] mt-4">
+        Veja como você pode fazer a diferença no mundo por gerações.
+      </p>
+
+      <!-- acoes -->
+      <div
+        id="social-actions"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:w-11/12 gap-6 mt-12"
+      >
+        <!-- usando js para multiplicar um card -->
+      </div>
+
+      <!-- <a
+        href=""
+        class="cursor-pointer text-black font-bold inline-block border-b-2 border-black hover:border-transparen"
+      >
+        Ver mais
+      </a> -->
+      <h2 class="text-3xl font-bold text-customBlue mt-24">
+        Ações Sociais perto de <span class="text-customYellow">Você</span>
+      </h2>
+      <p class="mt-4 text-[#c7c7c7]">
+        Descubra quais são as ações sociais próximas a você:
+      </p>
+      <!--  <p class="mt-10">
+        <strong>182 </strong>Resultados em
+        <span class="text-customBlue font-bold">São Paulo</span>
+      </p>
+      <div id="search" class="flex items-center relative group mt-4">
+        <svg
+          class="absolute left-4 w-4 h-4 fill-current text-gray-400"
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+        >
+          <g>
+            <path
+              d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"
+            ></path>
+          </g>
+        </svg>
+        <input
+          placeholder="Pesquisar"
+          type="search"
+          class="h-10 pl-10 pr-4 border-2 border-transparent rounded-3xl outline-none bg-gray-100 text-gray-900 transition ease duration-300 placeholder-gray-500 focus:border-customBlue focus:bg-white"
+        />
+      </div> -->
+      <div id="map" class="h-96 z-10 w-full md:w-1/2 p-2 mt-6 rounded-2xl">
+        <script type="module">
+          var map;
+          // script para criar e atualiazr o mapa com as ações prox do usuário  
+          function success(pos) {
+            console.log(pos.coords.latitude, pos.coords.longitude);
+
+            if (map === undefined) {
+              map = L.map("map").setView(
+                [pos.coords.latitude, pos.coords.longitude],
+                13
+              );
+            } else {
+              map.remove();
+              map = L.map("map").setView(
+                [pos.coords.latitude, pos.coords.longitude],
+                13
+              );
+            }
+
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+            //-23.5313256, -46.6610186
+            L.marker([pos.coords.latitude, pos.coords.longitude])
+              .addTo(map)
+              .bindPopup("Você está aqui!")
+              .openPopup();
+
+            listaAcoes.forEach((acao) => {
+              L.marker([acao.data.latitude, acao.data.longitude])
+                .addTo(map)
+                .bindPopup(acao.acao.nome)
+                .openPopup();
+            });
+          }
+
+          function error(err) {
+            console.log(err);
+          }
+
+          var watchID = navigator.geolocation.watchPosition(success, error, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+          });
+        </script>
+      </div>
+      <h1 class="text-3xl text-customBlue mt-24 font-bold">
+        Voluntários <span class="text-customYellow">Disponíveis</span>
+      </h1>
+      <p class="text-[#c7c7c7] mt-4">
+        Veja os voluntários que estão fazendo a diferença no mundo.
+      </p>
+      <div id="users" class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12"></div>
+    </main>
+    <footer
+      class="bg-customBlue mt-8 flex flex-col items-center justify-center text-white"
+    >
+      <!--
+      <p class="text-[#c7c7c7] py-8 text-center">
+        VTM é um acelerador que centrifica tudo relacionado a trabalhos
+        voluntários<br />
+        em nossa plataforma você encontrará diversos trabalhos
+      </p>
+       <nav>
+        <div class="flex justify-center font-bold px-10">
+          <a class="cursor-pointer px-4" src="">Sobre Nós</a>
+          <a class="cursor-pointer px-4" src="">Nossa Missão</a>
+          <a class="text-customYellow cursor-pointer px-4" src=""
+            >Ações Sociais</a
+          >
+          <a class="cursor-pointer px-4" src="">Entre em Contato</a>
+        </div>
+      </nav>
+      <div id="newsletter" class="mt-10 h-full">
+        <h3 class="text-center font-bold text-2xl">Assine Nossa Newsletter</h3>
+        <div class="flex flex-col md:flex-row mt-4">
+          <input
+            placeholder="Insira o seu e-mail"
+            class="w-full md:w-auto h-10 p-4 text-lg text-black rounded-3xl mb-4 md:mb-0 mr-0 md:mr-6 focus:border-customBlue"
+            name="email"
+            type="email"
+          />
+          <button
+            class="flex items-center justify-center h-10 bg-customYellow no-underline p-4 text-lg text-white rounded-3xl cursor-pointer font-bold"
+          >
+            Inscrever
+          </button>
+        </div>
+      </div> -->
+      <div class="mt-4 mb-2 text-[#c7c7c7] p-4 text-center">
+        <p>Copyright © VTM 2024. Todos os direitos reservados.</p>
+        <p>
+          Política de Privacidade | Política de usuário | Termos e Condições
+        </p>
+      </div>
+    </footer>
+
+    <!-- Modal -->
+
+    <div
+      id="modal"
+      class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50 hidden"
+    >
+      <div
+        class="bg-white z-30 m-4 p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-transform duration-300 scale-95"
+      >
+        <div class="flex justify-end">
+          <button
+            id="close-modal"
+            class="text-gray-600 hover:text-customYellow transition duration-300 text-3xl font-bold"
+          >
+            &times;
+          </button>
+        </div>
+        <h2
+          id="modal-nome"
+          class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2"
+        ></h2>
+        <p id="modal-descricao" class="text-gray-700 mb-4"></p>
+        <p id="modal-data-inicio" class="text-gray-600 mb-2"></p>
+        <p id="modal-data-fim" class="text-gray-600 mb-2"></p>
+        <p id="modal-cidade" class="text-gray-600 mb-2"></p>
+        <p id="modal-estado" class="text-gray-600 mb-2"></p>
+        <p id="modal-vagas" class="text-gray-600 mb-2"></p>
+        <button
+          id="inscreverBtn"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+        >
+          Inscrever-se
+        </button>
+      </div>
+    </div>
+
+    <!-- model users -->
+    <div
+      id="modalUsers"
+      class="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50 hidden"
+    >
+      <div
+        class="bg-white z-30 m-4 p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-transform duration-300 scale-95"
+      >
+        <div class="flex justify-end">
+          <button
+            id="close-modalUsers"
+            class="text-gray-600 hover:text-customYellow transition duration-300 text-3xl font-bold"
+          >
+            &times;
+          </button>
+        </div>
+        <h2
+          id="modal-nome"
+          class="text-2xl font-bold mb-4 text-gray-800 border-b pb-2"
+        ></h2>
+        <p id="modal-descricao" class="text-gray-700 mb-4"></p>
+        <p id="modal-data-inicio" class="text-gray-600 mb-2"></p>
+        <p id="modal-data-fim" class="text-gray-600 mb-2"></p>
+        <p id="modal-cidade" class="text-gray-600 mb-2"></p>
+        <p id="modal-estado" class="text-gray-600 mb-2"></p>
+        <p id="modal-vagas" class="text-gray-600 mb-2"></p>
+        <!-- Dropdown para listar ações -->
+        <div class="mb-4">
+          <select
+            id="select-acao"
+            class="w-full border-gray-300 rounded cursor-pointer"
+            style="display: none"
+          >
+            <option value="">Selecione uma ação</option>
+          </select>
+        </div>
+        <button
+          class="bg-customBlue hover:bg-customYellow hover:text-customBlue-dark text-white font-bold py-4 px-6 text-xs rounded-md mt-4 transition duration-300 hidden"
+          id="modal-convidar"
+          style="display: none"
+        >
+          Convidar para ação
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

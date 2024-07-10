@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ação Voluntária</title>
+    <% var additionalScripts=`
+    <script src="/js/home.js"></script>
+    ` %>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+
+  <body>
+    <header class="flex items-center justify-between p-4">
+      <img
+        src="https://i.ibb.co/2N3F070/vtm-pv-1.png"
+        alt="Logo Parceiros Voluntários"
+        class="p-2"
+        onclick="window.location.href = '/social'"
+      />
+      <div class="flex items-center">
+        <a href="/perfil" class="flex items-center">
+          <img
+            id="imgUser"
+            class="w-10 h-10 rounded-full mr-2 cursor-pointer bg-cover bg-center object-top"
+            style="object-fit: cover"
+            src="https://i.ibb.co/ZfYppNR/image.png"
+            alt="Foto do usuário"
+          />
+          <span id="textName" class="hidden md:inline"></span>
+        </a>
+        <div id="notification" class="relative mx-2">
+          <style>
+            @keyframes keyframes-fill {
+              0% {
+                opacity: 0;
+              }
+
+              25% {
+                transform: rotate(25deg);
+              }
+
+              50% {
+                transform: rotate(-20deg) scale(1.2);
+              }
+
+              75% {
+                transform: rotate(15deg);
+              }
+            }
+
+            .bell-regular {
+              position: absolute;
+              animation: keyframes-fill 0.5s;
+            }
+
+            .bell-solid {
+              position: absolute;
+              display: none;
+              animation: keyframes-fill 0.5s;
+            }
+
+            input:checked ~ .bell-regular {
+              display: none;
+            }
+
+            input:checked ~ .bell-solid {
+              display: block;
+            }
+
+            .popup input:checked ~ .popup-window {
+              transform: scale(1);
+              visibility: visible;
+              opacity: 1;
+            }
+
+            .popup input:checked ~ .overlay {
+              display: block;
+            }
+          </style>
+          <div
+            class="fixed inset-0 z-50 flex-col items-center justify-center hidden bg-black bg-opacity-50"
+          ></div>
+          <label class="popup inline-block relative cursor-pointer">
+            <input type="checkbox" class="hidden" id="notificacao" />
+            <div
+              class="flex justify-center items-center ml-5 py-2 text-[30px] fill-[#bfc2d8]"
+            >
+              <svg
+                class="bell-regular"
+                xmlns="http://www.w3.org/2000/svg"
+                height="0.7em"
+                viewBox="0 0 448 512"
+              >
+                <path
+                  d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"
+                ></path>
+              </svg>
+              <svg
+                class="bell-solid"
+                xmlns="http://www.w3.org/2000/svg"
+                height="0.7em"
+                viewBox="0 0 448 512"
+              >
+                <path
+                  d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"
+                ></path>
+              </svg>
+            </div>
+            <nav
+              class="popup-window absolute w-72 p-4 bg-gray-50 text-gray-700 rounded-lg right-0 shadow-lg border top-10 border-gray-300 transition-all transform scale-75 opacity-0 invisible"
+            >
+              <div
+                class="flex flex-col justify-between items-center mb-2"
+                id="popNotificacao"
+              >
+                <span class="text-sm" id="notificacaoTitulo"
+                  >Você não tem nenhuma notificação no momento.</span
+                >
+              </div>
+            </nav>
+          </label>
+          <script>
+            // Fechar o popup ao clicar fora dele
+            document
+              .querySelectorAll('.popup input[type="checkbox"]')
+              .forEach((checkbox) => {
+                checkbox.addEventListener("change", function () {
+                  document.querySelectorAll(".overlay").forEach((overlay) => {
+                    overlay.style.display = this.checked ? "block" : "none";
+                  });
+                });
+              });
+
+            document.querySelectorAll(".overlay").forEach((overlay) => {
+              overlay.addEventListener("click", () => {
+                document
+                  .querySelectorAll('.popup input[type="checkbox"]')
+                  .forEach((checkbox) => {
+                    checkbox.checked = false;
+                    overlay.style.display = "none";
+                  });
+              });
+            });
+
+            // Fechar o popup ao clicar no "X"
+            document
+              .querySelectorAll(".popup-window button")
+              .forEach((button) => {
+                button.addEventListener("click", () => {
+                  document
+                    .querySelectorAll('.popup input[type="checkbox"]')
+                    .forEach((checkbox) => {
+                      checkbox.checked = false;
+                      document
+                        .querySelectorAll(".overlay")
+                        .forEach((overlay) => {
+                          overlay.style.display = "none";
+                        });
+                    });
+                });
+              });
+          </script>
+        </div>
+        <div id="profile-dropdown" class="relative ml-4">
+          <style>
+            .burger span {
+              height: 0.125em;
+              width: 1.125em;
+              background: #bfc2d8;
+              border-radius: 0.1875em;
+              position: absolute;
+              transition: 0.3s;
+            }
+
+            .burger span:nth-child(1) {
+              top: 0.625em;
+            }
+
+            .burger span:nth-child(2) {
+              bottom: 0.625em;
+            }
+
+            .burger span:nth-child(3) {
+              top: 50%;
+              transform: translateY(-50%);
+            }
+
+            .popup input:checked + .burger span:nth-child(1) {
+              top: 50%;
+              transform: translateY(-50%) rotate(45deg);
+            }
+
+            .popup input:checked + .burger span:nth-child(2) {
+              bottom: 50%;
+              transform: translateY(50%) rotate(-45deg);
+            }
+
+            .popup input:checked + .burger span:nth-child(3) {
+              opacity: 0;
+            }
+
+            .popup input:checked ~ .popup-window {
+              transform: scale(1);
+              visibility: visible;
+              opacity: 1;
+            }
+          </style>
+
+          <label class="popup inline-block">
+            <input type="checkbox" class="hidden" />
+            <div
+              class="burger flex items-center justify-center w-8 h-8 rounded-full relative cursor-pointer transition-all ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <nav
+              style="left: -400%"
+              class="popup-window absolute p-2 bg-gray-50 text-gray-700 rounded-lg shadow-lg border border-gray-300 top-12 transition-all transform scale-75 opacity-0 invisible"
+            >
+              <legend class="px-4 py-1 text-xs uppercase text-gray-500">
+                Perfil
+              </legend>
+              <ul class="m-0 p-0 list-none">
+                <li>
+                  <button
+                    onclick="window.location.href = '/perfil'"
+                    class="w-full flex items-center text-sm p-2 hover:bg-customYellow hover:text-customBlue-dark transition duration-200 rounded-md gap-2"
+                  >
+                    <svg
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      height="14"
+                      width="14"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="text-customBlue"
+                    >
+                      <path
+                        d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      ></path>
+                      <circle r="4" cy="7" cx="9"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span class="whitespace-nowrap">Ações Voluntárias</span>
+                  </button>
+                </li>
+                <hr class="my-2 border-t border-gray-300" />
+                <li>
+                  <button
+                    id="logout-btn"
+                    class="w-full flex items-center text-sm p-2 hover:bg-customYellow hover:text-customBlue-dark transition duration-200 rounded-md gap-2"
+                  >
+                    <svg
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      height="14"
+                      width="14"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="text-red-600"
+                    >
+                      <line y2="18" x2="6" y1="6" x1="18"></line>
+                      <line y2="18" x2="18" y1="6" x1="6"></line>
+                    </svg>
+                    <span class="whitespace-nowrap">Sair</span>
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </label>
+        </div>
+      </div>
+    </header>
+    <hr />
+    <main>
+      <div class="lg:flex lg:justify-between lg:px-20 p-2">
+        <div class="flex items-center justify-center mt-1 p-4 lg:ml-16">
+          <img
+            src="https://i.ibb.co/qdGCNJz/design-700x456.webp"
+            alt="Imagem da ação"
+            class="h-96 rounded-2xl object-cover lg:h-full shadow-sm"
+          />
+        </div>
+        <div class="px-8 text-center lg:right-0 lg:mt-16 lg:mr-64 lg:w-1/3">
+          <h1
+            class="title text-customBlue-dark font-bold text-4xl mb-8 lg:text-5xl"
+            id="actionName"
+          ></h1>
+          <div
+            style="backdrop-filter: blur(0px)"
+            class="mb-10 lg:w-full shadow-md bg-[#fbfbfb] rounded"
+          >
+            <img
+              src="https://i.ibb.co/tqJGD14/Aspas.png"
+              alt="Aspas"
+              class="absolute ml-2 mt-3"
+            />
+            <p class="font-normal p-6 py-8" id="actionDesc"></p>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col justify-center lg:flex-row px-1 mb-24">
+        <div class="lg:border-r-2 lg:pr-8 w-full lg:w-1/3 mt-16">
+          <h2
+            class="text-3xl text-customBlue mb-8 font-bold text-center lg:text-start"
+          >
+            Dados da <span class="text-customYellow">Ação</span>
+          </h2>
+          <div class="bg-[#fbfbfb] lg:mx-14 mx-4 p-8 rounded-sm shadow-md">
+            <div class="flex justify-between items-baseline">
+              <p
+                class="text-white bg-customGreen p-1 w-20 text-center rounded mb-6 font-semibold"
+              >
+                Ativa
+              </p>
+              <button id="openEditAction">
+                <i
+                  class="fa-solid fa-pen-to-square text-customBlue hover:text-customYellow text-3xl duration-150"
+                ></i>
+              </button>
+            </div>
+            <p class="text-lg font-semibold">
+              <i
+                class="fa-regular fa-calendar mr-3 mb-4 text-3xl text-customBlue"
+              ></i>
+              <span id="actionDate"> 10/06/2024 - 20/07/2024 </span>
+            </p>
+            <p class="text-lg font-semibold">
+              <i
+                class="fa-solid fa-location-dot mr-3 mb-4 text-3xl text-customBlue"
+              ></i>
+              <span id="actionLocation"> Brasil - São Paulo, SP </span>
+            </p>
+            <p class="text-lg font-medium flex">
+              <i
+                class="fa-solid fa-hand-holding-heart mr-3 mb-4 text-3xl text-customBlue"
+              ></i>
+              <img
+                src="https://i.ibb.co/ZfYppNR/image.png"
+                alt="Foto do voluntário participante"
+                class="rounded-full h-10 mr-4"
+              /><span
+                class="align-bottom flex items-end mb-4"
+                id="actionCreator"
+              ></span>
+            </p>
+            <div
+              class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700 mt-6"
+            >
+              <div
+                class="bg-customYellow h-2.5 rounded-full sm:w-1/2 md:w-3/4 lg:w-2/3 xl:w-1/2"
+                style="width: 100%"
+              ></div>
+            </div>
+            <p class="text-xs mt-4">
+              Disponível<br /><strong class="text-xl" id="vagas"></strong>
+            </p>
+          </div>
+        </div>
+        <div
+          class="w-full lg:pl-8 text-center mt-16 lg:mx-20 lg:w-1/2 px-2 flex items-center flex-col"
+        >
+          <h3 class="text-3xl text-customBlue mb-8 font-bold">Participantes</h3>
+          <div class="group flex items-center relative lg:w-96 w-72 mb-4"></div>
+          <div class="w-full bg-[#fbfbfb] rounded-sm shadow-sm">
+            <ul id="volunteersList">
+              <li
+                id="user1"
+                class="flex justify-between p-6 hover:bg-gray-200 transition duration-300 rounded"
+              >
+                <div class="flex items-center">
+                  <a class="flex items-center">
+                    <img
+                      src="https://i.ibb.co/ZfYppNR/image.png"
+                      alt="Foto do voluntário participante"
+                      class="rounded-full h-10 mr-4"
+                    />
+                    <span id="ownerName">João Victor</span>
+                  </a>
+                  <span
+                    id="volunteerTag"
+                    class="mx-4 p-1 flex border-customBlue-dark text-xs rounded bg-customYellow text-customBlue-dark font-semibold"
+                  >
+                  </span>
+                </div>
+                <div class="flex gap-5">
+                  <!-- <button id="openProfileModalButton" class="">
+                    <i
+                      class="fa-solid fa-user text-xl text-customBlue hover:text-3xl duration-150"
+                    ></i>
+                  </button> -->
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!--Modal perfil-->
+      <div
+        id="profileModal"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center hidden bg-black bg-opacity-50"
+      >
+        <div class="lg:w-1/4 p-4 bg-white rounded-lg shadow-lg mb-4">
+          <div>
+            <div class="flex items-center flex justify-between mb-1">
+              <a class="flex items-center">
+                <img
+                  src="https://i.ibb.co/ZfYppNR/image.png"
+                  alt="Foto do voluntário participante"
+                  class="rounded-full h-10 mr-4"
+                /><span class="text-2xl font-semibold text-customBlue-dark"
+                  >João Victor</span
+                >
+              </a>
+              <div class="relative inline-block w-32 cursor-pointer">
+                <select
+                  class="block cursor-pointer appearance-none bg-white border border-customYellow text-customBlue-dark py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-customBlue"
+                >
+                  <option value="" disabled selected hidden>Cargo...</option>
+                  <option>Lavador</option>
+                  <option>Catador</option>
+                  <option>Varredor</option>
+                </select>
+              </div>
+              <button
+                id="closeProfileModalButton"
+                class="text-customBlue-dark hover:text-customYellow duration-300 px-1 mb-6"
+              >
+                <i class="fa-regular fa-circle-xmark text-xl"></i>
+              </button>
+            </div>
+            <hr />
+            <div class="gap-4 flex ml-2 mt-4">
+              <p class="text-gray-600">
+                <i class="fa-solid fa-cake-candles text-customBlue text-xl"></i>
+                21
+              </p>
+              <p class="text-gray-600">
+                <i class="fa-regular fa-clock text-customBlue text-xl"></i>
+                0
+              </p>
+              <p class="text-gray-600">
+                <i
+                  class="fa-solid fa-person-half-dress text-customBlue text-2xl"
+                ></i>
+                <span class="capitalize">Masculino</span>
+              </p>
+            </div>
+            <p class="text-gray-600 ml-2 mt-1 mb-4">
+              <i class="fa-solid fa-location-dot text-customBlue text-xl"></i>
+              <span class="capitalize">Brasil -</span>
+              <span class="capitalize">Belo Horizonte,</span>
+              <span class="capitalize">MG</span>
+            </p>
+            <div class="flex items-center ml-2">
+              <i
+                class="fa-solid fa-clock-rotate-left text-customBlue text-2xl"
+              ></i>
+              <input
+                type="hours"
+                min="1"
+                step="1"
+                class="block bg-white w-44 text-customBlue-dark py-2 px-4 rounded focus:border-customYellow"
+                placeholder="Horas trabalhadas"
+              />
+            </div>
+          </div>
+          <hr />
+          <div class="mt-2 flex items-center justify-center gap-4">
+            <button
+              id="closeProfileModalButton2"
+              class="px-4 py-2 text-white bg-customGreen rounded hover:bg-customYellow hover:text-customBlue-dark font-semibold transition duration-300"
+            >
+              Salvar
+            </button>
+            <button
+              id="closeProfileModalButton2"
+              class="px-4 py-2 text-white bg-customRed rounded hover:bg-customYellow hover:text-customBlue-dark font-semibold transition duration-300"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!--Modal excluir voluntário-->
+      <div
+        id="deleteModal"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center hidden bg-black bg-opacity-50"
+      >
+        <div class="lg:w-1/4 p-4 bg-white rounded-lg shadow-lg text-center">
+          <p class="text-3xl font-bold mb-8 text-customBlue mt-8">
+            Remover voluntário?
+          </p>
+          <hr />
+          <div class="flex items-center justify-center flex px-2 gap-8 py-3">
+            <button
+              id="closeDeleteVolunteer"
+              class="px-4 py-2 text-white bg-customRed rounded hover:bg-customYellow hover:text-customBlue-dark font-semibold transition duration-300"
+            >
+              Remover
+            </button>
+            <button
+              id="closeDeleteVolunteer"
+              class="px-4 py-2 text-customBlue-dark rounded hover:bg-customYellow hover:text-customBlue-dark font-semibold transition duration-300 border"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Modal -->
+      <div
+        id="editAction"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+      >
+        <div
+          class="bg-white m-4 p-8 rounded-lg shadow-lg w-full max-w-lg transform transition-transform duration-300 scale-95"
+        >
+          <p
+            class="text-3xl text-customBlue mb-2 font-bold text-center lg:text-start"
+          >
+            Editar Ação
+          </p>
+          <hr />
+          <div>
+            <p class="text-gray-700 font-semibold mb-2">Imagem da Ação</p>
+            <input type="file" id="imageUpload" accept="image/*" />
+            <br /><br />
+            <img
+              id="previewImage"
+              src="#"
+              alt="Prévia da imagem"
+              style="display: none; max-width: 300px; max-height: 300px"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="edit-cidade" class="block text-gray-700 font-semibold"
+              >Nome da Ação</label
+            >
+            <input
+              type="text"
+              id="edit-cidade"
+              class="w-full p-2 border rounded focus:border-customYellow"
+              required
+            />
+          </div>
+          <div class="mb-5">
+            <label
+              for="edit-descricao"
+              class="block text-gray-700 font-semibold"
+              >Descrição</label
+            >
+            <textarea
+              id="edit-descricao"
+              class="w-full p-2 border rounded"
+              required
+            ></textarea>
+          </div>
+          <div class="mb-4">
+            <label
+              for="edit-data-inicio"
+              class="block text-gray-700 font-semibold"
+              >Data de Início</label
+            >
+            <input
+              type="date"
+              id="edit-data-inicio"
+              class="w-full p-2 border rounded focus:border-customYellow"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="edit-data-fim" class="block text-gray-700 font-semibold"
+              >Data de Término</label
+            >
+            <input
+              type="date"
+              id="edit-data-fim"
+              class="w-full p-2 border rounded focus:border-customYellow"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="edit-cidade" class="block text-gray-700 font-semibold"
+              >Cidade</label
+            >
+            <input
+              type="text"
+              id="edit-cidade"
+              class="w-full p-2 border rounded focus:border-customYellow"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="edit-estado" class="block text-gray-700 font-semibold"
+              >Estado</label
+            >
+            <input
+              type="text"
+              id="edit-estado"
+              class="w-full p-2 border rounded focus:border-customYellow"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="edit-vagas" class="block text-gray-700 font-semibold"
+              >Quantidade de Vagas</label
+            >
+            <input
+              type="number"
+              id="edit-vagas"
+              class="w-full p-2 border rounded focus:border-customYellow"
+              required
+            />
+          </div>
+          <hr />
+          <div class="mt-5 flex items-center justify-center gap-4">
+            <button
+              id="saveEditAction"
+              class="px-4 py-2 text-white bg-customGreen rounded hover:bg-customYellow hover:text-customBlue-dark font-semibold transition duration-300"
+            >
+              Salvar
+            </button>
+            <button
+              id="closeEditAction"
+              class="px-4 py-2 text-white bg-customRed rounded hover:bg-customYellow hover:text-customBlue-dark font-semibold transition duration-300"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 
+        <div id="" class="fixed inset-0 z-50 flex flex-col items-center justify-center hidden bg-black bg-opacity-50">
+            <div class="lg:w-1/4 p-4 bg-white rounded-lg shadow-lg text-center">
+                <p class="text-3xl text-customBlue mb-2 font-bold text-center lg:text-start">Editar <span
+                        class="text-customYellow">Ação</span>
+                </p>
+                <hr>
+                <div class="flex-col text-start mt-4">
+                    <button id="actionStats"
+                        class="text-white bg-customGreen p-1 w-20 text-center rounded mb-6 font-semibold">Ativa</button>
+
+                    <p class="text-lg font-semibold">
+                        <i class="fa-regular fa-calendar mr-3 mb-4 text-3xl text-customBlue"></i>10/06/2024 - 20/07/2024
+                    </p>
+                    <p class="text-lg font-semibold">
+                        <i class="fa-solid fa-location-dot mr-3 mb-4 text-3xl text-customBlue"></i>Brasil - São Paulo,
+                        SP
+                    </p>
+                    <p class="mb-4 font-semibold text-xl">Vagas disponíveis: <strong>40</strong></p>
+                </div>
+                <hr>
+
+            </div>
+        </div>
+        -->
+    </main>
+    <footer
+      class="bg-customBlue mt-8 flex flex-col items-center justify-center text-white"
+    >
+      <!--
+    <p class="text-[#c7c7c7] py-8 text-center">
+      VTM é um acelerador que centrifica tudo relacionado a trabalhos
+      voluntários<br />
+      em nossa plataforma você encontrará diversos trabalhos
+    </p>
+     <nav>
+      <div class="flex justify-center font-bold px-10">
+        <a class="cursor-pointer px-4" src="">Sobre Nós</a>
+        <a class="cursor-pointer px-4" src="">Nossa Missão</a>
+        <a class="text-customYellow cursor-pointer px-4" src=""
+          >Ações Sociais</a
+        >
+        <a class="cursor-pointer px-4" src="">Entre em Contato</a>
+      </div>
+    </nav>
+    <div id="newsletter" class="mt-10 h-full">
+      <h3 class="text-center font-bold text-2xl">Assine Nossa Newsletter</h3>
+      <div class="flex flex-col md:flex-row mt-4">
+        <input
+          placeholder="Insira o seu e-mail"
+          class="w-full md:w-auto h-10 p-4 text-lg text-black rounded-3xl mb-4 md:mb-0 mr-0 md:mr-6 focus:border-customBlue"
+          name="email"
+          type="email"
+        />
+        <button
+          class="flex items-center justify-center h-10 bg-customYellow no-underline p-4 text-lg text-white rounded-3xl cursor-pointer font-bold"
+        >
+          Inscrever
+        </button>
+      </div>
+    </div> -->
+      <div class="mt-4 mb-2 text-[#c7c7c7] p-4 text-center">
+        <p>Copyright © VTM 2024. Todos os direitos reservados.</p>
+        <p>
+          Política de Privacidade | Política de usuário | Termos e Condições
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Pegar o id da ação a partir da URL da página
+      function getAcaoId() {
+        const url = new URL(window.location.href);
+        const pathname = url.pathname; // "/pages/verAcao/id"
+        const segments = pathname.split("/"); // ["", "pages", "verAcao", "id"]
+        const value = segments.pop(); // "id"
+        console.log("Id da ação:", value); // Output: id
+        return value;
+      }
+
+      const idAcao = getAcaoId();
+
+      async function getAcaoInfo() {
+        const response = await fetch(`/getOneAcao/${idAcao}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Erro ao buscar informações da ação: ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+        return data;
+      }
+
+      async function getCreatorInfo(data) {
+        const response = await fetch(`/user/${data.idCriador}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Erro ao buscar informações do criador da ação: ${response.statusText}`
+          );
+        }
+
+        const userData = await response.json();
+        return userData;
+      }
+
+      async function updateUi(data) {
+        document.getElementById("actionName").innerText = data.nome;
+        document.getElementById("actionDesc").innerText = data.descricao;
+
+        const formattedStartDate = data.dataInicio
+          .split("-")
+          .reverse()
+          .join("/");
+        const formattedEndDate = data.dataFim.split("-").join("/");
+        document.getElementById(
+          "actionDate"
+        ).innerText = `${formattedStartDate} - ${formattedEndDate}`;
+
+        document.getElementById(
+          "actionLocation"
+        ).innerText = `${data.pais} - ${data.estado}, ${data.cidade}`;
+
+        document.getElementById("vagas").innerText =
+          data.numeroVagas + " Vagas";
+      }
+
+      getAcaoInfo()
+        .then((data) => {
+          console.log("data", data);
+          updateUi(data);
+        })
+        .catch((error) => {
+          console.error("Erro ao atualizar a UI:", error);
+        });
+
+      getAcaoInfo()
+        .then((data) => {
+          getCreatorInfo(data)
+            .then((userData) => {
+              document.getElementById("actionCreator").innerText =
+                userData.nome;
+              document.getElementById("ownerName").innerText = userData.nome;
+            })
+            .catch((error) => {
+              console.error("Erro ao buscar informações do criador:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar informações da ação:", error);
+        });
+
+      async function getActionUsers() {
+        const response = await fetch(`/usuarioPorProjeto/find/${idAcao}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Erro ao buscar informações dos usuários da ação: ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+        console.log("data", data);
+        return data;
+      }
+
+      getActionUsers().then((data) => {
+        data.forEach(async (user) => {
+          const response = await fetch(`/user/${user.PerfilUsuario}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const userInfo = await response.json();
+          console.log(userInfo);
+
+          const volunteersList = document.getElementById("volunteersList");
+          const volunteer = document.createElement("li");
+          volunteer.classList.add(
+            "flex",
+            "justify-between",
+            "p-6",
+            "hover:bg-gray-200",
+            "transition",
+            "duration-300",
+            "rounded"
+          );
+          volunteer.id = `user${userInfo.id}`;
+          // HTML para um usuário pertencente a uma ação
+          volunteer.innerHTML = `
+            
+            <div class="flex items-center">
+                  <a class="flex items-center">
+                    <img
+                      src="${userInfo.foto}"
+                      alt="Foto do voluntário participante"
+                      class="rounded-full h-10 mr-4"
+                    />
+                    <span>${userInfo.nome}</span>
+                  </a>
+                  <span
+                    id="volunteerTag"
+                    class="mx-4 p-1 flex border-customBlue-dark text-xs rounded bg-customYellow text-customBlue-dark font-semibold"
+                  >
+                    
+                  </span>
+                </div>
+                
+
+            `;
+
+          volunteersList.appendChild(volunteer);
+        });
+      });
+
+      async function updateActionInfo() {
+        const actionName = document.getElementById("edit-cidade").value;
+        const actionDesc = document.getElementById("edit-descricao").value;
+        const actionStartDate =
+          document.getElementById("edit-data-inicio").value;
+        const actionEndDate = document.getElementById("edit-data-fim").value;
+        const actionState = document.getElementById("edit-estado").value;
+        const actionCity = document.getElementById("edit-cidade").value;
+        const actionVagas = document.getElementById("edit-vagas").value;
+
+        if (actionName) {
+          document.getElementById("actionName").innerText = actionName;
+        }
+        if (actionDesc) {
+          document.getElementById("actionDesc").innerText = actionDesc;
+        }
+        if (actionStartDate && actionEndDate) {
+          const formattedStartDate = actionStartDate
+            .split("-")
+            .reverse()
+            .join("/");
+          const formattedEndDate = actionEndDate.split("-").reverse().join("/");
+          document.getElementById(
+            "actionDate"
+          ).innerText = `${formattedStartDate} - ${formattedEndDate}`;
+        }
+
+        if (actionState && actionCity) {
+          document.getElementById(
+            "actionLocation"
+          ).innerText = `${actionState} - ${actionCity}`;
+        }
+        if (actionVagas) {
+          document.getElementById("vagas").innerText = actionVagas + " Vagas";
+        }
+
+        if (
+          actionVagas &&
+          actionDesc &&
+          actionName &&
+          actionStartDate &&
+          actionEndDate &&
+          actionState &&
+          actionCity
+        ) {
+          // Só atualiza as informações se todos os campos estiverem preenchidos
+          const response = await fetch(`/updateAcao/${idAcao}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              nome: actionName,
+              descricao: actionDesc,
+              dataInicio: actionStartDate,
+              dataFim: actionEndDate,
+              estado: actionState,
+              cidade: actionCity,
+              numeroVagas: actionVagas,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Erro ao atualizar informações da ação: ${response.statusText}`
+            );
+          }
+
+          const data = await response.json();
+          console.log("Informações da ação atualizadas:", data);
+          return data;
+        } else {
+          alert("Preencha todos os campos");
+          return;
+        }
+      }
+
+      //verificação se o arquivo é imagem
+      document
+        .getElementById("imageUpload")
+        .addEventListener("change", function (event) {
+          var file = event.target.files[0];
+          if (file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              var previewImage = document.getElementById("previewImage");
+              previewImage.src = e.target.result;
+              previewImage.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+      // JavaScript para abrir e fechar o editAction
+      document
+        .getElementById("openEditAction")
+        .addEventListener("click", function () {
+          document.getElementById("editAction").classList.remove("hidden");
+        });
+
+      document
+        .getElementById("closeEditAction")
+        .addEventListener("click", function () {
+          document.getElementById("editAction").classList.add("hidden");
+        });
+
+      document
+        .getElementById("saveEditAction")
+        .addEventListener("click", async function () {
+          await updateActionInfo();
+          document.getElementById("editAction").classList.add("hidden");
+        });
+
+      // Fechar o modal ao clicar fora do conteúdo do modal
+      document
+        .getElementById("editAction")
+        .addEventListener("click", function (event) {
+          if (event.target == this) {
+            document.getElementById("editAction").classList.add("hidden");
+          }
+        });
+
+      // JavaScript para abrir e fechar o profileModal
+      document
+        .getElementById("openProfileModalButton")
+        .addEventListener("click", function () {
+          document.getElementById("profileModal").classList.remove("hidden");
+        });
+
+      document
+        .getElementById("closeProfileModalButton")
+        .addEventListener("click", function () {
+          document.getElementById("profileModal").classList.add("hidden");
+        });
+
+      document
+        .getElementById("closeProfileModalButton2")
+        .addEventListener("click", function () {
+          document.getElementById("profileModal").classList.add("hidden");
+        });
+
+      // Fechar o modal ao clicar fora do conteúdo do modal
+      document
+        .getElementById("profileModal")
+        .addEventListener("click", function (event) {
+          if (event.target == this) {
+            document.getElementById("profileModal").classList.add("hidden");
+          }
+        });
+
+      // JavaScript para abrir e fechar o deleteModal
+      document
+        .getElementById("openDeleteModal")
+        .addEventListener("click", function () {
+          document.getElementById("deleteModal").classList.remove("hidden");
+        });
+
+      document
+        .getElementById("closeDeleteVolunteer")
+        .addEventListener("click", function () {
+          document.getElementById("deleteModal").classList.add("hidden");
+        });
+
+      // Fechar o modal ao clicar fora do conteúdo do modal
+      document
+        .getElementById("deleteModal")
+        .addEventListener("click", function (event) {
+          if (event.target == this) {
+            document.getElementById("deleteModal").classList.add("hidden");
+          }
+        });
+    </script>
+  </body>
+</html>

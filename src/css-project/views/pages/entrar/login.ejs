@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100 flex items-center justify-center h-screen p-4">
+    <div
+      class="container mx-auto flex shadow-lg rounded-3xl h-full overflow-hidden"
+    >
+      <div
+        class="w-1/2 hidden lg:block bg-cover bg-center relative"
+        style="
+          background-image: url('https://i.ibb.co/Cs6Wcm3/Pexels-Photo-by-Mikhail-Nilov.png');
+        "
+      ></div>
+      <div
+        class="w-full lg:w-1/2 bg-white flex flex-col justify-center items-center p-6 md:p-12"
+      >
+        <img
+          src="https://i.ibb.co/Sxhnwjt/vtm-pv-colorido.png"
+          class="w-40 mb-6"
+          alt="Logo"
+        />
+        <form id="formSubmit" class="w-full max-w-md">
+          <h2 class="text-3xl font-bold text-blue-600 mb-6 text-center">
+            Login
+          </h2>
+          <div class="mb-4">
+            <label for="username" class="block text-blue-600 font-bold mb-2"
+              >Email:</label
+            >
+            <input
+              type="text"
+              id="username"
+              placeholder="email@exemplo.com"
+              class="w-full p-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+          <div class="mb-6">
+            <label for="password" class="block text-blue-600 font-bold mb-2"
+              >Senha:</label
+            >
+            <input
+              type="password"
+              id="password"
+              placeholder="*******"
+              class="w-full p-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+          <div class="flex justify-between mb-6">
+            <a
+              href="#"
+              class="flex items-center justify-center w-1/2 px-3 py-2 border rounded shadow-sm hover:bg-gray-100 transition"
+            >
+              <img
+                src="https://t.ctcdn.com.br/lvns56iaSMyHvyTur4JeYS_NYeY=/i606944.png"
+                alt="Google"
+                class="w-5 h-5 mr-2"
+              />
+              Google
+            </a>
+            <a
+              href="#"
+              class="flex items-center justify-center w-1/2 ml-2 px-3 py-2 border rounded shadow-sm hover:bg-gray-100 transition"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg"
+                alt="Facebook"
+                class="w-5 h-5 mr-2"
+              />
+              Facebook
+            </a>
+          </div>
+          <button
+            class="w-full bg-blue-600 text-white font-bold py-2 rounded shadow hover:bg-blue-700 transition"
+            id="loginButton"
+          >
+            Login
+          </button>
+        </form>
+        <div>
+          <div class="mt-4 text-center">
+            <p>
+              Não possui uma conta?
+              <a href="/cadastro" class="text-blue-600 hover:underline"
+                >Cadastrar-se</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      document
+        .getElementById("formSubmit")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          //login email and password with firebase pelo controller
+          fetch("/emailLogin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: username,
+              password: password,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Success:", data);
+              // verificar se o usuário foi autenticado
+              if (data.user) {
+                // Redirect to social page
+                window.location.href = "/social";
+              } else {
+                alert("Usuário ou senha inválidos");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              //alert("Erro ao fazer login. Tente novamente mais tarde.");
+            });
+        });
+    </script>
+  </body>
+</html>
